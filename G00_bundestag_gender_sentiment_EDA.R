@@ -1,14 +1,16 @@
-# Here, I set up the bundestag dataframe with necessary information for analysis
+# Here, I set up the bundestag dataframe with necessary information for gender
+# analysis and perform visualization
 
 #Test
 
-# This is just for initial analysis
+# This is just for data wrangling
 
 library(tidyverse)
 library(dplyr)
 library(readr)
 library(ggplot2)
 library(purrr)
+library(qs)
 
 # Load quanteda related packages
 
@@ -77,3 +79,23 @@ c.fbn <- corpus(
   filtered.bundestag.name,
   text_field = "text"      
 )
+
+# Calculate sentiment
+
+toks <- tokens_tolower(tokens(c.fbn, remove_punct = TRUE, remove_numbers = TRUE))
+
+
+toks_lsd <- tokens_lookup(toks, dictionary = data_dictionary_Rauh, 
+                          exclusive = TRUE,  
+                          nested_scope = "dictionary")
+
+
+df_lsd <- dfm(toks_lsd)
+df_sentiment <- convert(df_lsd, to = "data.frame")
+
+df_merged <- cbind(df_sentiment, docvars(c.fbn)) %>%
+  dplyr::mutate(sentiment = log((positive+1)/(negative+1)))
+
+# Save sentiment calculation
+
+qsave(df_merged, "bundestag_gender_sentiment_df.qs")
