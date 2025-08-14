@@ -111,11 +111,29 @@ mpds <- mp_maindataset() %>%
            case_when(partyabbrev == "90/Greens" ~ "GRUENE",
                      partyabbrev == "PDS" ~ "PDS/LINKE",
                      partyabbrev == "L-PDS" ~ "PDS/LINKE",
+                     partyabbrev == "LINKE" ~ "PDS/LINKE",
                      TRUE ~ partyabbrev)) %>%
   dplyr::filter(party_merge != "") %>%
   dplyr::filter(absseat > 0) %>%
-  mutate(year = as.numeric(substr(date, 1, 4)))
+  mutate(year_election = as.numeric(substr(date, 1, 4))) %>%
+  dplyr::select(-c(date, party))
 
 # Merge with df merge
 
-df.merged.mpds <- left_join       
+df_merged.ye <- df_merged %>%
+  mutate(year_election =
+           case_when(Year <= 2001 ~ 1998,
+                     Year <= 2004 ~ 2002,
+                     Year <= 2008 ~ 2005,
+                     Year <= 2012 ~ 2009,
+                     Year <= 2016 ~ 2013,
+                     Year <= 2020 ~ 2017,
+                     TRUE ~ 2021
+           )) %>%
+  mutate(year_election = ifelse(party == "FDP" & year_election == 2013, 2009, year_election))
+
+
+df.merged.mpds <- inner_join(df_merged.ye, mpds,
+                             by = c("party" = "party_merge", "year_election"))
+
+
