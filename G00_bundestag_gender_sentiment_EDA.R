@@ -113,5 +113,9 @@ mpds <- mp_maindataset() %>%
                      partyabbrev == "L-PDS" ~ "PDS/LINKE",
                      TRUE ~ partyabbrev)) %>%
   dplyr::filter(party_merge != "") %>%
-  dplyr::filter(absseat > 0)
-         
+  dplyr::filter(absseat > 0) %>%
+  mutate(year = as.numeric(substr(date, 1, 4)))
+
+# Merge with df merge
+
+df.merged.mpds <- left_join       
