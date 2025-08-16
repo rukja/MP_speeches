@@ -29,6 +29,9 @@ library(manifestoR)
 
 Corp_Bundestag_V2 <- readRDS("Corp_Bundestag_V2.rds")
 
+# The above is accessed from here: 
+# https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/L4OAKN
+
 # Filter to more than 50 terms and remove independent MPs
 # Additionally, filter for year >= 2000
 
