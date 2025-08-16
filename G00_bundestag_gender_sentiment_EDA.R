@@ -1,8 +1,5 @@
 # Here, I set up the bundestag dataframe with necessary information for gender
 # analysis and perform visualization
-
-#Test
-
 # This is just for data wrangling
 
 library(tidyverse)
