@@ -366,7 +366,7 @@ ggplot(df_long, aes(x = value, y = median_sentiment, color = party)) +
   labs(
     x = element_blank(),
     y = "Median sentiment",
-    title = "Scatter plots of manifesto variables vs. Median Sentiment (Germany)"
+    title = "Scatter plots of median sentiment vs. manifesto variables (Germany)"
   )
 
 ggsave("./gender_EDA/manifesto_party_sentiment_germany.pdf", width = 11, height = 9.5)
@@ -390,8 +390,12 @@ ggplot(df_long, aes(x = value, y = prop_female, color = party)) +
   labs(
     x = element_blank(),
     y = "Proportion of speakers who were female",
-    title = "Scatter plots of manifesto variables vs. female proportion (Germany)"
+    title = "Scatter plots of female proportion vs. manifesto variables (Germany)"
   )
 
 ggsave("./gender_EDA/manifesto_party_female_germany.pdf", width = 11, height = 9.5)
+
+###===### SAVE =====
+
+qsave(df.merged.mpds, "bundestag_mpds_gender_sentiment_df.qs")
 
