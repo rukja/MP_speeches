@@ -13,5 +13,5 @@ library(reshape2)
 
 
 # Read in data =====
-df.merged.mpds <- qread("bundestag_mpds_gender_sentiment_df.qs")
-df.merged <- qread("bundestag_gender_sentiment_df.qs")
+df.merged.mpds <- qread("bundestag_files/bundestag_mpds_gender_sentiment_df.qs")
+df.merged <- qread("bundestag_files/bundestag_gender_sentiment_df.qs")
