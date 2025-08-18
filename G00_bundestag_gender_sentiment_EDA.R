@@ -422,3 +422,13 @@ if (target_year %in% data$year) {
 }
 
 print(result)
+
+
+#Two dataframes, one where year is present and the other with party, year, and % of positions
+#For row in df 2
+# Subset to that year in df 1
+# If the value for the party is NA, then assign absent
+# elif the value for the party is 0, then assign Min
+# Else
+# If the 
+
