@@ -399,3 +399,26 @@ ggsave("./gender_EDA/manifesto_party_female_germany.pdf", width = 11, height = 9
 
 qsave(df.merged.mpds, "bundestag_mpds_gender_sentiment_df.qs")
 
+# Template code
+
+library(dplyr)
+
+# Sample data
+data <- tibble(
+  year = c(2020, 2021, 2022, 2024, 2025),
+  value = c(10, 15, 20, 25, 30)
+)
+
+target_year <- 2023 # The year you are looking for
+
+# Check if target_year exists in the data
+if (target_year %in% data$year) {
+  result <- data %>% filter(year == target_year)
+} else {
+  # If target_year is not found, get the most recent year's data
+  result <- data %>% 
+    arrange(desc(year)) %>% 
+    slice(1) # Select the first row (most recent)
+}
+
+print(result)
