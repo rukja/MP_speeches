@@ -100,6 +100,7 @@ df_merged <- cbind(df_sentiment, docvars(c.fbn)) %>%
 # Save sentiment calculation
 
 qsave(df_merged, "bundestag_gender_sentiment_df.qs")
+df_merged <- qread("bundestag_files/bundestag_gender_sentiment_df.qs")
 
 # Load manifesto information
 mp_setapikey("manifesto_apikey.txt")
@@ -398,6 +399,22 @@ ggsave("./gender_EDA/manifesto_party_female_germany.pdf", width = 11, height = 9
 ###===### SAVE =====
 
 qsave(df.merged.mpds, "bundestag_mpds_gender_sentiment_df.qs")
+df_merged.mpds <- qread("bundestag_files/bundestag_mpds_gender_sentiment_df.qs")
+
+###===### READ IN PARTY INFO FILE =====
+
+EJPR.orig <- read_csv("bundestag_files/data.csv")
+
+###===### CLEAN PARTY INFO FILE =====
+
+EJPR.cleaned <- EJPR.orig %>%
+  dplyr::filter(Year >= 2000) %>%
+  dplyr::distinct(Party, Year, .keep_all = TRUE) %>%
+  dplyr::mutate(Party = ifelse(Party == "CSU", "CDU/CSU", Party)) %>%
+  group_by(Party, Year) %>%
+  summarize(
+    tot_minist = sum(per_pos)
+  )
 
 # Template code
 
