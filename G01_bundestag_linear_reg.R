@@ -1,5 +1,5 @@
 # Here, I perform linear regression analysis for exploring the relationship between
-# mpds, sex, party, and sentiment
+# mpds, sex, Party, and sentiment
 
 library(tidyverse)
 library(dplyr)
@@ -15,6 +15,7 @@ library(car)
 # Leaps
 library(leaps)
 library(robustbase) # For robust regression
+library(emmeans)
 
 # I will compare models using AIC
 
@@ -40,37 +41,47 @@ summary(df.merged$sentiment)
 ## Data is not normally distributed; sample size is large, however
 ## We use robust regression  =======
 
-df.merged$party <- as.factor(df.merged$party)
+df.merged$Party <- as.factor(df.merged$Party)
 df.merged$gender <- as.factor(df.merged$gender)
 df.merged$year <- as.factor(df.merged$Year)
-robust_model <- glmrob(sentiment ~ party + gender + gender:party, family = "gaussian", data = df.merged)
+df.merged$Status <- as.factor(df.merged$Status)
+
+df.merged$Party  <- relevel(df.merged$Party, ref = "PDS/LINKE")
+df.merged$Status <- relevel(df.merged$Status, ref = "opp")
+df.merged$gender <- relevel(df.merged$gender, ref = "male")
+
+form <- sentiment ~ Party + gender + gender:Party + Status + Party:Status
+
+
+robust_model <- glmrob(form, family = "gaussian", data = df.merged)
 summary(robust_model)
 robust_residuals <- residuals(robust_model)
 
 ## I want to compare with glm, and with lm ======
 
 
-basic_model <- lm(sentiment ~ party + gender + gender:party, data = df.merged)
+basic_model <- lm(form, data = df.merged)
 summary(basic_model)
 basic_residuals <- residuals(basic_model)
 
-general_model <- glm(sentiment ~ party + gender + gender:party, data = df.merged)
+general_model <- glm(form, data = df.merged)
 summary(general_model)
 general_residuals <- residuals(general_model)
 
-## Plot residuals =====
+## Conduct emmeans analysis =====
 
-residual.df <- as.data.frame(cbind(robust_residuals, basic_residuals, general_residuals))
-residual.df <- residual.df %>%
-  mutate(id = row_number()) %>%
-  melt(., id = "id")
+emm.g.sp <- emmeans(general_model, ~ Status | Party + gender)
+pairs(emm.g.sp)
 
-residual.plot <- ggplot(residual.df, aes(x=id, y=value)) +
-  geom_point() +
-  ggtitle("Relationship between regression type and residual behavior") +
-  xlab("Observation in dataset") +
-  ylab("Residual value") + facet_wrap(~variable)
+emm.g.ps <- emmeans(general_model, ~ gender | Party + Status)
+pairs(emm.g.ps)
 
+emm.simple <- emmeans(general_model, ~ Status | Party )
+pairs(emm.simple)
 
+emm.gender <- emmeans(general_model, ~ gender | Party)
+pairs(emm.gender)
+
+plot(emm.simple)
 
 
