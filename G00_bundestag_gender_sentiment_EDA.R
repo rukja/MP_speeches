@@ -407,45 +407,44 @@ EJPR.orig <- read_csv("bundestag_files/data.csv")
 
 ###===### CLEAN PARTY INFO FILE =====
 
+
 EJPR.cleaned <- EJPR.orig %>%
-  dplyr::filter(Year >= 2000) %>%
+  filter(Year >= 2000) %>%
   dplyr::distinct(Party, Year, .keep_all = TRUE) %>%
-  dplyr::mutate(Party = ifelse(Party == "CSU", "CDU/CSU", Party)) %>%
+  mutate(Party = ifelse(Party == "CSU", "CDU/CSU", Party)) %>%
   group_by(Party, Year) %>%
   summarize(
     tot_minist = sum(per_pos)
+  ) %>%
+  mutate(
+    tot_minist = ifelse(Year == 2021 & Party %in% c("FDP", "GRUENE"), 0, tot_minist)
   )
+
+EJPR.cleaned.wide <- EJPR.cleaned %>%
+  pivot_wider(names_from = Party, values_from = tot_minist, values_fill = 0) 
+
+EJPR.coalition <- EJPR.cleaned.wide %>%
+  pivot_longer(-Year, names_to = "Party", values_to = "Share") %>%
+  group_by(Year) %>%
+  mutate(
+    MaxShare = max(Share, na.rm = TRUE),
+    Status = case_when(
+      Share == 0 | is.na(Share) ~ "ntbf",
+      Share == MaxShare         ~ "MajC",
+      Share > 0                 ~ "MinC"
+    )
+  ) %>%
+  ungroup() %>%
+  dplyr::select(c(Year, Party, Status))
+
+
+###===### MERGE =====
+
+
 
 # Template code
 
 library(dplyr)
 
-# Sample data
-data <- tibble(
-  year = c(2020, 2021, 2022, 2024, 2025),
-  value = c(10, 15, 20, 25, 30)
-)
 
-target_year <- 2023 # The year you are looking for
-
-# Check if target_year exists in the data
-if (target_year %in% data$year) {
-  result <- data %>% filter(year == target_year)
-} else {
-  # If target_year is not found, get the most recent year's data
-  result <- data %>% 
-    arrange(desc(year)) %>% 
-    slice(1) # Select the first row (most recent)
-}
-
-print(result)
-
-
-#Two dataframes, one where year is present and the other with party, year, and % of positions
-#For row in df 2
-# Subset to that year in df 1
-# If the value for the party is NA, then assign absent
-# elif the value for the party is 0, then assign Min
-# Else
-# If the 
 
