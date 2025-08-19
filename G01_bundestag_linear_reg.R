@@ -82,6 +82,13 @@ pairs(emm.simple)
 emm.gender <- emmeans(general_model, ~ gender | Party)
 pairs(emm.gender)
 
-plot(emm.simple)
+emm_df <- as.data.frame(emm.simple)
 
+
+ggplot(emm_df, aes(x = emmean, y = Status, color = Party)) +
+  geom_point(position = position_dodge(width = 0.5), size = 3) +
+  geom_errorbarh(aes(xmin = lower.CL, xmax = upper.CL),
+                 position = position_dodge(width = 0.5), height = 0.2) +
+  labs(x = "Estimated Sentiment", y = "Coalition Status") +
+  theme_minimal()
 
