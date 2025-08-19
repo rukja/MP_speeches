@@ -174,7 +174,7 @@ ggplot(group.by.name.party, aes(x = party, y = prop_female, fill = party)) +
   ggtitle("Proportion of all unique speakers who were women (Germany)") +
   theme_minimal()
 
-ggsave("./gender_EDA/prop_unique_speakers_who_were_women_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/prop_unique_speakers_who_were_women_germany.pdf", width = 9.5, height = 11)
 
 ###===### Proportion of all unique speakers who were women per party per year  ====
   
@@ -192,7 +192,7 @@ ggplot(group.by.party.year, aes(x = Year, y = prop_female, color = party)) +
   ggtitle("Proportion of all unique speakers who were women (Germany)") +
   theme_minimal()
 
-ggsave("./gender_EDA/party_prop_unique_speakers_who_were_women_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/party_prop_unique_speakers_who_were_women_germany.pdf", width = 9.5, height = 11)
 
 ###===### Violinplot of sentiment per party ====
 
@@ -202,7 +202,7 @@ ggplot(df.merged.mpds, aes(x = party, y = sentiment, fill = party)) +
   ggtitle("Distribution of speech sentiments by party (Germany)") +
   theme_minimal()
 
-ggsave("./gender_EDA/dist_speech_sentiment_party_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/dist_speech_sentiment_party_germany.pdf", width = 9.5, height = 11)
 
 ###===### Boxplot of sentiment per party, grouped by year ====
 
@@ -213,7 +213,7 @@ ggplot(df.merged.mpds, aes(x = as.factor(Year), y = sentiment, fill = party)) +
   ggtitle("Distribution of speech sentiments by party over time (Germany)") +
   theme_minimal()
 
-ggsave("./gender_EDA/dist_speech_sentiment_party_time_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/dist_speech_sentiment_party_time_germany.pdf", width = 9.5, height = 11)
 
 ###===### Boxplot of terms per party ====
 
@@ -224,7 +224,7 @@ ggplot(df.merged.mpds, aes(x = party, y = terms, fill = party)) +
   ggtitle("Distribution of terms spoken by party (Germany)") +
   theme_minimal()
 
-ggsave("./gender_EDA/dist_terms_party_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/dist_terms_party_germany.pdf", width = 9.5, height = 11)
 
 
 ###===### Boxplot of terms per party per gender ====
@@ -235,7 +235,7 @@ ggplot(df.merged.mpds, aes(x = party, y = terms, fill = gender)) +
   ggtitle("Distribution of terms spoken by party by sex (Germany)") +
   theme_minimal()
 
-ggsave("./gender_EDA/dist_terms_party_sex_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/dist_terms_party_sex_germany.pdf", width = 9.5, height = 11)
 
 ###===### Boxplot of terms per party per gender over time ====
 
@@ -248,7 +248,7 @@ ggplot(df.merged.mpds, aes(x = as.factor(Year), y = terms, fill = gender)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90))
 
-ggsave("./gender_EDA/dist_terms_time_sex_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/dist_terms_time_sex_germany.pdf", width = 9.5, height = 11)
 
 
 ###===### Boxplot of sentiment based on chairs ====
@@ -259,7 +259,7 @@ ggplot(df.merged.mpds, aes(x = chair, y = sentiment, fill = chair)) +
   ggtitle("Distribution of sentiment by speaker position (Germany)") +
   theme_minimal() 
 
-ggsave("./gender_EDA/dist_sent_chair_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/dist_sent_chair_germany.pdf", width = 9.5, height = 11)
 
 ###===### Boxplot of terms based on chairs ====
 
@@ -269,7 +269,7 @@ ggplot(df.merged.mpds, aes(x = chair, y = terms, fill = chair)) +
   ggtitle("Distribution of terms spoken by speaker position (Germany)") +
   theme_minimal()
 
-ggsave("./gender_EDA/dist_terms_chair_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/dist_terms_chair_germany.pdf", width = 9.5, height = 11)
 
 ###===### Boxplot of sentiment by sex ====
 
@@ -280,7 +280,7 @@ ggplot(df.merged.mpds, aes(x = gender, y = sentiment, fill = gender)) +
   ggtitle("Distribution of sentiment by speaker sex (Germany)") +
   theme_minimal() 
 
-ggsave("./gender_EDA/dist_sent_sex_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/dist_sent_sex_germany.pdf", width = 9.5, height = 11)
 
 
 ###===### Boxplot of sentiment by sex by party ====
@@ -291,7 +291,7 @@ ggplot(df.merged.mpds, aes(x = party, y = sentiment, fill = gender)) +
   ggtitle("Distribution of sentiment by speaker sex by party (Germany)") +
   theme_minimal() 
 
-ggsave("./gender_EDA/dist_sent_sex_party_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/dist_sent_sex_party_germany.pdf", width = 9.5, height = 11)
 
 ###===### Boxplot of sentiment by sex by party, facets ====
 
@@ -302,7 +302,7 @@ ggplot(df.merged.mpds, aes(x = party, y = sentiment, fill = party)) +
   ggtitle("Distribution of sentiment by speaker sex by party, faceted by sex (Germany)") +
   theme_minimal() 
 
-ggsave("./gender_EDA/dist_sent_sex_party_facet_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/dist_sent_sex_party_facet_germany.pdf", width = 9.5, height = 11)
 
 # Integrate mpds data ====
 
@@ -322,7 +322,7 @@ ggplot(df_avg, aes(x = as.numeric(prop_seats), y = median_sentiment)) +
   ylab("Median Sentiment") +
   theme_minimal()
 
-ggsave("./gender_EDA/sentvsseatsprop_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/sentvsseatsprop_germany.pdf", width = 9.5, height = 11)
 
 ###===### Relationship between seats and sentiment, grouped by party ====
 
@@ -336,7 +336,7 @@ ggplot(df_avg, aes(x = as.numeric(prop_seats), y = median_sentiment, color = par
   ylab("Median Sentiment") +
   theme_minimal()
 
-ggsave("./gender_EDA/party_sentvsseatsprop_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_bundestag/party_sentvsseatsprop_germany.pdf", width = 9.5, height = 11)
 
 # Set up perceptions df ====
 
@@ -375,7 +375,7 @@ ggplot(df_long, aes(x = value, y = median_sentiment, color = party)) +
     title = "Scatter plots of median sentiment vs. manifesto variables (Germany)"
   )
 
-ggsave("./gender_EDA/manifesto_party_sentiment_germany.pdf", width = 11, height = 9.5)
+ggsave("./gender_EDA_bundestag/manifesto_party_sentiment_germany.pdf", width = 11, height = 9.5)
 
 ###===### Relationship between perception scores and female proportion, grouped by party ====
 df_long <- df_perc %>%
@@ -399,7 +399,7 @@ ggplot(df_long, aes(x = value, y = prop_female, color = party)) +
     title = "Scatter plots of female proportion vs. manifesto variables (Germany)"
   )
 
-ggsave("./gender_EDA/manifesto_party_female_germany.pdf", width = 11, height = 9.5)
+ggsave("./gender_EDA_bundestag/manifesto_party_female_germany.pdf", width = 11, height = 9.5)
 
 ###===### SAVE =====
 
@@ -477,3 +477,66 @@ df_merged <- dt_merged %>%
 
 qsave(df_merged, "bundestag_files/bundestag_gender_sentiment_df.qs")
 qsave(dt_merged, "bundestag_files/bundestag_mpds_gender_sentiment_df.qs")
+
+###===### PLOT =====
+
+df_merged.mpds <- dt_merged
+
+###===### SENTIMENT SCORE BY STATUS ======
+
+ggplot(df_merged, aes(x = Status, y = sentiment, fill = Status)) +
+  geom_violin() +
+  scale_fill_manual(values = status_map) + 
+  theme_minimal() +
+  labs(
+    x = "Government status",
+    y = "Sentiment",
+    title = "Sentiment by government status (Germany)"
+  )
+
+ggsave("./gender_EDA_bundestag/sentiment_gov_status.pdf", width = 9.5, height = 11)
+
+###===### SENTIMENT SCORE BY STATUS BY PARTY======
+
+ggplot(df_merged, aes(x = Status, y = sentiment, fill = Party)) +
+  geom_violin() +
+  scale_fill_manual(values = party_map) + 
+  theme_minimal() +
+  labs(
+    x = "Government status",
+    y = "Sentiment",
+    title = "Sentiment by government status for each party (Germany)"
+  )
+
+ggsave("./gender_EDA_bundestag/sentiment_party_gov_status.pdf", width = 9.5, height = 11)
+
+
+
+###===### SENTIMENT SCORE BY PARTY BY STATUS ======
+
+ggplot(df_merged, aes(x = Party, y = sentiment, fill = Status)) +
+  geom_violin() +
+  scale_fill_manual(values = status_map) + 
+  theme_minimal() +
+  labs(
+    x = "Party",
+    y = "Sentiment",
+    title = "Sentiment by party colored by government status (Germany)"
+  )
+
+ggsave("./gender_EDA_bundestag/sentiment_party_gov_status_alt.pdf", width = 9.5, height = 11)
+
+###===### SENTIMENT SCORE FACETED BY GOVERNMENT STATUS, COLORED BY SEX ======
+ggplot(df_merged, aes(x = Party, y = sentiment, fill = gender)) +
+  geom_violin() +
+  scale_fill_manual(values = gender_map, name = "Sex") + 
+  theme_minimal() +
+  facet_wrap(~Status, scales = "free") + 
+  labs(
+    x = "Party",
+    y = "Sentiment",
+    title = "Sentiment by party, government status, and speaker sex (Germany)"
+  )
+
+ggsave("./gender_EDA_bundestag/sentiment_party_gov_status_sex.pdf", width = 9.5, height = 11)
+
