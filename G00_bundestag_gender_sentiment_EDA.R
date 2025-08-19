@@ -9,6 +9,7 @@ library(ggplot2)
 library(purrr)
 library(qs)
 library(reshape2)
+library(data.table)
 
 # Load external and related packages
 
@@ -149,6 +150,10 @@ party_map <- c("GRUENE" = "forestgreen",
 
 chair_map <- c("TRUE" = "burlywood3",
                "FALSE" = "darkseagreen3")
+
+status_map <- c("MinC" = "violetred1",
+                "MajC" = "tomato1",
+                "opp" = "darkslategray2")
 
 df.merged.mpds <- df.merged.mpds %>%
   dplyr::mutate(female = ifelse(gender == "female", 1, 0))
@@ -401,6 +406,8 @@ ggsave("./gender_EDA/manifesto_party_female_germany.pdf", width = 11, height = 9
 qsave(df.merged.mpds, "bundestag_mpds_gender_sentiment_df.qs")
 df_merged.mpds <- qread("bundestag_files/bundestag_mpds_gender_sentiment_df.qs")
 
+# PARTY STATUS ANALYSIS
+
 ###===### READ IN PARTY INFO FILE =====
 
 EJPR.orig <- read_csv("bundestag_files/data.csv")
@@ -440,11 +447,33 @@ EJPR.coalition <- EJPR.cleaned.wide %>%
 
 ###===### MERGE =====
 
+dt_speech <- as.data.table(df_merged.mpds)
+dt_coalition <- as.data.table(EJPR.coalition)
 
+setnames(dt_speech, "party", "Party")
+setkey(dt_coalition, Party, Year)
+setkey(dt_speech, Party, Year)
+dt_merged <- dt_coalition[dt_speech, roll = TRUE]
+dt_merged[is.na(Status), Status := "ntbf"]
 
-# Template code
+###===### ADD INFO ABOUT STATUS =====
 
-library(dplyr)
+dt_merged <- dt_merged %>%
+  mutate(Status = 
+    case_when(
+      Status == "ntbf" & absseat == 0 ~ "absent",
+      Status == "ntbf" & absseat > 0 ~ "opp",
+     .default = Status
+    )
+  )
 
+df_merged <- df_merged %>% rename(Party = party)
 
+df_merged <- dt_merged %>%
+  dplyr::select(c(Party, speaker, Year, doc_id, Status)) %>%
+  inner_join(df_merged, ., by = c("Party", "speaker", "doc_id", "Year"))
 
+###===### SAVE =====
+
+qsave(df_merged, "bundestag_files/bundestag_gender_sentiment_df.qs")
+qsave(dt_merged, "bundestag_files/bundestag_mpds_gender_sentiment_df.qs")
