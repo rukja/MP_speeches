@@ -82,6 +82,13 @@ pairs(emm.simple)
 emm.gender <- emmeans(general_model, ~ gender | Party)
 pairs(emm.gender)
 
+
+RG5 <- ref_grid(general_model, cov.reduce = FALSE)
+
+
+emmip(RG5, Party ~ gender | Status, style = "factor")
+emmip(RG5, Party ~ Status, style = "factor")
+
 emm_df <- as.data.frame(emm.simple)
 
 
@@ -92,3 +99,4 @@ ggplot(emm_df, aes(x = emmean, y = Status, color = Party)) +
   labs(x = "Estimated Sentiment", y = "Coalition Status") +
   theme_minimal()
 
+emmip(emm.simple, sentimentstyle = "Factor")
