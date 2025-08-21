@@ -50,7 +50,7 @@ df.merged$Party  <- relevel(df.merged$Party, ref = "PDS/LINKE")
 df.merged$Status <- relevel(df.merged$Status, ref = "opp")
 df.merged$gender <- relevel(df.merged$gender, ref = "male")
 
-form <- sentiment ~ Party + gender + gender:Party + Status + Party:Status
+form <- as.numeric(sentiment) ~ Party + chair:Party + gender + gender:Party + Status + Party:Status + chair + gender:Status
 
 
 robust_model <- glmrob(form, family = "gaussian", data = df.merged)
@@ -68,35 +68,10 @@ general_model <- glm(form, data = df.merged)
 summary(general_model)
 general_residuals <- residuals(general_model)
 
-## Conduct emmeans analysis =====
+par(mfrow=c(2,2))
 
-emm.g.sp <- emmeans(general_model, ~ Status | Party + gender)
-pairs(emm.g.sp)
+plot(general_model)
 
-emm.g.ps <- emmeans(general_model, ~ gender | Party + Status)
-pairs(emm.g.ps)
-
-emm.simple <- emmeans(general_model, ~ Status | Party )
-pairs(emm.simple)
-
-emm.gender <- emmeans(general_model, ~ gender | Party)
-pairs(emm.gender)
+# The model does not fit well 
 
 
-RG5 <- ref_grid(general_model, cov.reduce = FALSE)
-
-
-emmip(RG5, Party ~ gender | Status, style = "factor")
-emmip(RG5, Party ~ Status, style = "factor")
-
-emm_df <- as.data.frame(emm.simple)
-
-
-ggplot(emm_df, aes(x = emmean, y = Status, color = Party)) +
-  geom_point(position = position_dodge(width = 0.5), size = 3) +
-  geom_errorbarh(aes(xmin = lower.CL, xmax = upper.CL),
-                 position = position_dodge(width = 0.5), height = 0.2) +
-  labs(x = "Estimated Sentiment", y = "Coalition Status") +
-  theme_minimal()
-
-emmip(emm.simple, sentimentstyle = "Factor")
