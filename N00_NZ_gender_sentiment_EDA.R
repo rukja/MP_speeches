@@ -375,3 +375,4 @@ ggplot(df_merged, aes(x = Party, y = sentiment, fill = gender)) +
 
 ggsave("./gender_EDA_nz/sentiment_party_gov_status_sex.pdf", width = 9.5, height = 11)
 
+## DONE
