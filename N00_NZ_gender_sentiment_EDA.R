@@ -267,13 +267,9 @@ EJPR.orig <- read_csv("nz_files/data.csv")
 EJPR.cleaned <- EJPR.orig %>%
   filter(Year >= 2000) %>%
   dplyr::distinct(Party, Year, .keep_all = TRUE) %>%
-  mutate(Party = ifelse(Party == "CSU", "CDU/CSU", Party)) %>%
   group_by(Party, Year) %>%
   summarize(
     tot_minist = sum(per_pos)
-  ) %>%
-  mutate(
-    tot_minist = ifelse(Year == 2021 & Party %in% c("FDP", "GRUENE"), 0, tot_minist)
   )
 
 EJPR.cleaned.wide <- EJPR.cleaned %>%
@@ -285,7 +281,7 @@ EJPR.coalition <- EJPR.cleaned.wide %>%
   mutate(
     MaxShare = max(Share, na.rm = TRUE),
     Status = case_when(
-      Share == 0 | is.na(Share) ~ "ntbf",
+      Share == 0 | is.na(Share) ~ "opp",
       Share == MaxShare         ~ "MajC",
       Share > 0                 ~ "MinC"
     )
@@ -295,7 +291,7 @@ EJPR.coalition <- EJPR.cleaned.wide %>%
 
 
 ###===### MERGE =====
-
+df_merged <- df.merged
 dt_speech <- as.data.table(df_merged)
 dt_coalition <- as.data.table(EJPR.coalition)
 
@@ -303,18 +299,9 @@ setnames(dt_speech, "party", "Party")
 setkey(dt_coalition, Party, Year)
 setkey(dt_speech, Party, Year)
 dt_merged <- dt_coalition[dt_speech, roll = TRUE]
-dt_merged[is.na(Status), Status := "ntbf"]
+dt_merged[is.na(Status), Status := "opp"]
 
 ###===### ADD INFO ABOUT STATUS =====
-
-dt_merged <- dt_merged %>%
-  mutate(Status = 
-           case_when(
-             Status == "ntbf" & absseat == 0 ~ "absent",
-             Status == "ntbf" & absseat > 0 ~ "opp",
-             .default = Status
-           )
-  )
 
 df_merged <- df_merged %>% rename(Party = party)
 
@@ -324,8 +311,7 @@ df_merged <- dt_merged %>%
 
 ###===### SAVE =====
 
-qsave(df_merged, "nz_files/nz_gender_sentiment_df.qs")
-qsave(dt_merged, "nz_files/nz_mpds_gender_sentiment_df.qs")
+qsave(df_merged, "nz_files/nz_gender_sentiment_df_status.qs")
 
 ###===### PLOT =====
 
