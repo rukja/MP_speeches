@@ -133,7 +133,7 @@ df_merged.ye <- df_merged %>%
                      Year <= 2019 ~ 2017,
                      TRUE ~ NA
            )) 
-
+## IN PROGRESS
 
 df.merged.mpds <- inner_join(df_merged.ye, mpds,
                              by = c("party" = "party_merge", "year_election"))
