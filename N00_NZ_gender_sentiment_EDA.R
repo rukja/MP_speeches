@@ -124,15 +124,15 @@ mpds <- mp_maindataset() %>%
 
 df_merged.ye <- df_merged %>%
   mutate(year_election =
-           case_when(Year <= 2001 ~ 1998,
+           case_when(Year <= 2001 ~ 1999,
                      Year <= 2004 ~ 2002,
-                     Year <= 2008 ~ 2005,
-                     Year <= 2012 ~ 2009,
-                     Year <= 2016 ~ 2013,
-                     Year <= 2020 ~ 2017,
-                     TRUE ~ 2021
-           )) %>%
-  mutate(year_election = ifelse(party == "FDP" & year_election == 2013, 2009, year_election))
+                     Year <= 2007 ~ 2005,
+                     Year <= 2010 ~ 2008,
+                     Year <= 2013 ~ 2011,
+                     Year <= 2016 ~ 2014,
+                     Year <= 2019 ~ 2017
+                     TRUE ~ NA
+           )) 
 
 
 df.merged.mpds <- inner_join(df_merged.ye, mpds,
