@@ -42,27 +42,27 @@ df.merged$gender <- as.factor(df.merged$gender)
 df.merged$year <- as.factor(df.merged$Year)
 df.merged$Status <- as.factor(df.merged$Status)
 
-df.merged$Party  <- relevel(df.merged$Party, ref = "PDS/LINKE")
+df.merged$Party  <- relevel(df.merged$Party, ref = "Green")
 df.merged$Status <- relevel(df.merged$Status, ref = "opp")
 df.merged$gender <- relevel(df.merged$gender, ref = "male")
 
-form <- as.numeric(sentiment) ~ Party + chair:Party + gender + gender:Party + Status + Party:Status + chair + gender:Status
+form <- as.numeric(sentiment) ~ Party + gender + gender:Party + Status + Party:Status
 
 
 robust_model <- glmrob(form, family = "gaussian", data = df.merged)
 summary(robust_model)
-robust_residuals <- residuals(robust_model)
+
 
 ## I want to compare with glm, and with lm ======
 
 
 basic_model <- lm(form, data = df.merged)
 summary(basic_model)
-basic_residuals <- residuals(basic_model)
+
 
 general_model <- glm(form, data = df.merged)
 summary(general_model)
-general_residuals <- residuals(general_model)
+
 
 par(mfrow=c(2,2))
 
