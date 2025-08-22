@@ -109,11 +109,15 @@ df_merged <- qread("nz_files/nz_gender_sentiment_df.qs")
 
 gender_map <- c("female" = "blue", "male" = "red")
 party_map <- c("National" = "darkblue",
-               "AfD" = "black",
-               "CDU/CSU" = "deepskyblue4",
-               "FDP" = "darkgoldenrod1",
-               "PDS/LINKE" = "deeppink2",
-               "SPD" = "darkred")
+               "NZ First" = "black",
+               "Labour" = "indianred2",
+               "ACT" = "darkgoldenrod1",
+               "Green" = "green",
+               "Maori" = "darkred",
+               "Mana" = "grey",
+               "United Future" = "mediumpurple1",
+               "Alliance" = "mediumspringgreen",
+               "Progressive" = "lightsteelblue1")
 
 chair_map <- c("TRUE" = "burlywood3",
                "FALSE" = "darkseagreen3")
@@ -122,12 +126,13 @@ status_map <- c("MinC" = "violetred1",
                 "MajC" = "tomato1",
                 "opp" = "darkslategray2")
 
-df.merged.mpds <- df.merged.mpds %>%
-  dplyr::mutate(female = ifelse(gender == "female", 1, 0))
+df.merged <- df_merged %>%
+  dplyr::mutate(female = ifelse(gender == "female", 1, 0)) %>%
+  dplyr::filter(party != "Independent")
 
 ###===### Proportion of all unique speakers who were women  ====
 
-group.by.name.party <- df.merged.mpds %>%
+group.by.name.party <- df.merged %>%
   distinct(party, speaker, .keep_all = TRUE) %>%
   group_by(party) %>%
   summarise(
@@ -138,14 +143,14 @@ group.by.name.party <- df.merged.mpds %>%
 ggplot(group.by.name.party, aes(x = party, y = prop_female, fill = party)) +
   geom_bar(stat = "identity") +
   scale_fill_manual(values = party_map) +
-  ggtitle("Proportion of all unique speakers who were women (Germany)") +
+  ggtitle("Proportion of all unique speakers who were women (NZ)") +
   theme_minimal()
 
-ggsave("./gender_EDA_nz/prop_unique_speakers_who_were_women_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_nz/prop_unique_speakers_who_were_women_NZ.pdf", width = 9.5, height = 11)
 
 ###===### Proportion of all unique speakers who were women per party per year  ====
 
-group.by.party.year <- df.merged.mpds %>%
+group.by.party.year <- df.merged %>%
   distinct(party, speaker, Year, .keep_all = TRUE) %>%
   group_by(party, Year) %>%
   summarise(
@@ -156,222 +161,99 @@ group.by.party.year <- df.merged.mpds %>%
 ggplot(group.by.party.year, aes(x = Year, y = prop_female, color = party)) +
   geom_line() +
   scale_color_manual(values = party_map) +
-  ggtitle("Proportion of all unique speakers who were women (Germany)") +
+  ggtitle("Proportion of all unique speakers who were women (NZ)") +
   theme_minimal()
 
-ggsave("./gender_EDA_nz/party_prop_unique_speakers_who_were_women_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_nz/party_prop_unique_speakers_who_were_women_NZ.pdf", width = 9.5, height = 11)
 
 ###===### Violinplot of sentiment per party ====
 
-ggplot(df.merged.mpds, aes(x = party, y = sentiment, fill = party)) +
+ggplot(df.merged, aes(x = party, y = sentiment, fill = party)) +
   geom_violin() +
   scale_fill_manual(values = party_map) +
-  ggtitle("Distribution of speech sentiments by party (Germany)") +
+  ggtitle("Distribution of speech sentiments by party (NZ)") +
   theme_minimal()
 
-ggsave("./gender_EDA_nz/dist_speech_sentiment_party_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_nz/dist_speech_sentiment_party_NZ.pdf", width = 9.5, height = 11)
 
 ###===### Boxplot of sentiment per party, grouped by year ====
 
-ggplot(df.merged.mpds, aes(x = as.factor(Year), y = sentiment, fill = party)) +
+ggplot(df.merged, aes(x = as.factor(Year), y = sentiment, fill = party)) +
   geom_boxplot(outlier.shape = NA) +
   scale_fill_manual(values = party_map) +
   xlab("Year") + 
-  ggtitle("Distribution of speech sentiments by party over time (Germany)") +
+  ggtitle("Distribution of speech sentiments by party over time (NZ)") +
   theme_minimal()
 
-ggsave("./gender_EDA_nz/dist_speech_sentiment_party_time_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_nz/dist_speech_sentiment_party_time_NZ.pdf", width = 9.5, height = 11)
 
 ###===### Boxplot of terms per party ====
 
-ggplot(df.merged.mpds, aes(x = party, y = terms, fill = party)) +
+ggplot(df.merged, aes(x = party, y = terms, fill = party)) +
   geom_boxplot() +
   scale_fill_manual(values = party_map) +
   xlab("Year") + 
-  ggtitle("Distribution of terms spoken by party (Germany)") +
+  ggtitle("Distribution of terms spoken by party (NZ)") +
   theme_minimal()
 
-ggsave("./gender_EDA_nz/dist_terms_party_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_nz/dist_terms_party_NZ.pdf", width = 9.5, height = 11)
 
 
 ###===### Boxplot of terms per party per gender ====
 
-ggplot(df.merged.mpds, aes(x = party, y = terms, fill = gender)) +
+ggplot(df.merged, aes(x = party, y = terms, fill = gender)) +
   geom_boxplot() +
   scale_fill_manual(values = gender_map, name = "sex") +
-  ggtitle("Distribution of terms spoken by party by sex (Germany)") +
+  ggtitle("Distribution of terms spoken by party by sex (NZ)") +
   theme_minimal()
 
-ggsave("./gender_EDA_nz/dist_terms_party_sex_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_nz/dist_terms_party_sex_NZ.pdf", width = 9.5, height = 11)
 
 ###===### Boxplot of terms per party per gender over time ====
 
-ggplot(df.merged.mpds, aes(x = as.factor(Year), y = terms, fill = gender)) +
+ggplot(df.merged, aes(x = as.factor(Year), y = terms, fill = gender)) +
   geom_boxplot() +
   xlab("Year") +
   scale_fill_manual(values = gender_map, name = "sex") +
   facet_wrap(~party, scales = "free") +
-  ggtitle("Distribution of terms spoken by party by sex over time (Germany)") +
+  ggtitle("Distribution of terms spoken by party by sex over time (NZ)") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90))
 
-ggsave("./gender_EDA_nz/dist_terms_time_sex_germany.pdf", width = 9.5, height = 11)
-
-
-###===### Boxplot of sentiment based on chairs ====
-
-ggplot(df.merged.mpds, aes(x = chair, y = sentiment, fill = chair)) +
-  geom_boxplot() +
-  scale_fill_manual(values = chair_map) +
-  ggtitle("Distribution of sentiment by speaker position (Germany)") +
-  theme_minimal() 
-
-ggsave("./gender_EDA_nz/dist_sent_chair_germany.pdf", width = 9.5, height = 11)
-
-###===### Boxplot of terms based on chairs ====
-
-ggplot(df.merged.mpds, aes(x = chair, y = terms, fill = chair)) +
-  geom_boxplot() +
-  scale_fill_manual(values = chair_map) +
-  ggtitle("Distribution of terms spoken by speaker position (Germany)") +
-  theme_minimal()
-
-ggsave("./gender_EDA_nz/dist_terms_chair_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_nz/dist_terms_time_sex_NZ.pdf", width = 9.5, height = 11)
 
 ###===### Boxplot of sentiment by sex ====
 
-ggplot(df.merged.mpds, aes(x = gender, y = sentiment, fill = gender)) +
+ggplot(df.merged, aes(x = gender, y = sentiment, fill = gender)) +
   geom_boxplot() +
   scale_fill_manual(values = gender_map, name = "sex") +
   xlab("sex") + 
-  ggtitle("Distribution of sentiment by speaker sex (Germany)") +
+  ggtitle("Distribution of sentiment by speaker sex (NZ)") +
   theme_minimal() 
 
-ggsave("./gender_EDA_nz/dist_sent_sex_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_nz/dist_sent_sex_NZ.pdf", width = 9.5, height = 11)
 
 
 ###===### Boxplot of sentiment by sex by party ====
 
-ggplot(df.merged.mpds, aes(x = party, y = sentiment, fill = gender)) +
+ggplot(df.merged, aes(x = party, y = sentiment, fill = gender)) +
   geom_boxplot() +
   scale_fill_manual(values = gender_map, name = "sex") +
-  ggtitle("Distribution of sentiment by speaker sex by party (Germany)") +
+  ggtitle("Distribution of sentiment by speaker sex by party (NZ)") +
   theme_minimal() 
 
-ggsave("./gender_EDA_nz/dist_sent_sex_party_germany.pdf", width = 9.5, height = 11)
+ggsave("./gender_EDA_nz/dist_sent_sex_party_NZ.pdf", width = 9.5, height = 11)
 
 ###===### Boxplot of sentiment by sex by party, facets ====
 
-ggplot(df.merged.mpds, aes(x = party, y = sentiment, fill = party)) +
+ggplot(df.merged, aes(x = party, y = sentiment, fill = party)) +
   geom_boxplot() +
   scale_fill_manual(values = party_map) +
   facet_wrap(~gender) + 
-  ggtitle("Distribution of sentiment by speaker sex by party, faceted by sex (Germany)") +
+  ggtitle("Distribution of sentiment by speaker sex by party, faceted by sex (NZ)") +
   theme_minimal() 
 
-ggsave("./gender_EDA_nz/dist_sent_sex_party_facet_germany.pdf", width = 9.5, height = 11)
-
-# Integrate mpds data ====
-
-###===### Relationship between seats and sentiment ====
-
-
-
-df_avg <- df.merged.mpds %>%
-  group_by(party, year_election, prop_seats) %>%
-  summarize(median_sentiment = median(sentiment), .groups = "drop")
-
-
-ggplot(df_avg, aes(x = as.numeric(prop_seats), y = median_sentiment)) +
-  geom_point() +
-  ggtitle("Median Sentiment vs. Proportion of Seats (Germany)") +
-  xlab("Proportion of Seats") +
-  ylab("Median Sentiment") +
-  theme_minimal()
-
-ggsave("./gender_EDA_nz/sentvsseatsprop_germany.pdf", width = 9.5, height = 11)
-
-###===### Relationship between seats and sentiment, grouped by party ====
-
-
-ggplot(df_avg, aes(x = as.numeric(prop_seats), y = median_sentiment, color = party)) +
-  geom_point() +
-  geom_line() + 
-  scale_color_manual(values = party_map) +
-  ggtitle("Median Sentiment vs. Proportion of Seats (Germany)") +
-  xlab("Proportion of Seats") +
-  ylab("Median Sentiment") +
-  theme_minimal()
-
-ggsave("./gender_EDA_nz/party_sentvsseatsprop_germany.pdf", width = 9.5, height = 11)
-
-# Set up perceptions df ====
-
-df_perc <- df_merged.ye %>%
-  dplyr::mutate(female = ifelse(gender == "female", 1, 0)) %>%
-  group_by(party, year_election) %>%
-  summarize(total = n_distinct(speaker, party),
-            median_sentiment = median(sentiment),
-            prop_female = sum(female[!duplicated(speaker)]) / total,
-            .groups = "drop") %>%
-  inner_join(., mpds,
-             by = c("party" = "party_merge", "year_election")) %>%
-  select(where(~ !all(. == 0, na.rm = TRUE))) %>%
-  select(-matches("_\\d+$"))
-
-###===### Relationship between perception scores and sentiment, grouped by party ====
-
-df_long <- df_perc %>%
-  select(party, median_sentiment, starts_with("per"), rile, markeco, welfare, intpeace) %>%
-  pivot_longer(
-    cols = -c(party, median_sentiment),
-    names_to = "variable",
-    values_to = "value"
-  )
-
-
-ggplot(df_long, aes(x = value, y = median_sentiment, color = party)) +
-  geom_point(alpha = 0.7) +
-  facet_wrap(~ variable, scales = "free") +  
-  scale_color_manual(values = party_map) + 
-  theme_minimal() +
-  theme(axis.text.x = element_text(size = 8)) + 
-  labs(
-    x = element_blank(),
-    y = "Median sentiment",
-    title = "Scatter plots of median sentiment vs. manifesto variables (Germany)"
-  )
-
-ggsave("./gender_EDA_nz/manifesto_party_sentiment_germany.pdf", width = 11, height = 9.5)
-
-###===### Relationship between perception scores and female proportion, grouped by party ====
-df_long <- df_perc %>%
-  select(party, prop_female, starts_with("per"), rile, markeco, welfare, intpeace) %>%
-  pivot_longer(
-    cols = -c(party, prop_female),
-    names_to = "variable",
-    values_to = "value"
-  )
-
-
-ggplot(df_long, aes(x = value, y = prop_female, color = party)) +
-  geom_point(alpha = 0.7) +
-  facet_wrap(~ variable, scales = "free") +  
-  scale_color_manual(values = party_map) + 
-  theme_minimal() +
-  theme(axis.text.x = element_text(size = 8)) + 
-  labs(
-    x = element_blank(),
-    y = "Proportion of speakers who were female",
-    title = "Scatter plots of female proportion vs. manifesto variables (Germany)"
-  )
-
-ggsave("./gender_EDA_nz/manifesto_party_female_germany.pdf", width = 11, height = 9.5)
-
-###===### SAVE =====
-
-qsave(df.merged.mpds, "nz_mpds_gender_sentiment_df.qs")
-df_merged.mpds <- qread("nz_files/nz_mpds_gender_sentiment_df.qs")
+ggsave("./gender_EDA_nz/dist_sent_sex_party_facet_NZ.pdf", width = 9.5, height = 11)
 
 # PARTY STATUS ANALYSIS
 
@@ -414,7 +296,7 @@ EJPR.coalition <- EJPR.cleaned.wide %>%
 
 ###===### MERGE =====
 
-dt_speech <- as.data.table(df_merged.mpds)
+dt_speech <- as.data.table(df_merged)
 dt_coalition <- as.data.table(EJPR.coalition)
 
 setnames(dt_speech, "party", "Party")
@@ -447,7 +329,7 @@ qsave(dt_merged, "nz_files/nz_mpds_gender_sentiment_df.qs")
 
 ###===### PLOT =====
 
-df_merged.mpds <- dt_merged
+df_merged <- dt_merged
 
 ###===### SENTIMENT SCORE BY STATUS ======
 
@@ -458,7 +340,7 @@ ggplot(df_merged, aes(x = Status, y = sentiment, fill = Status)) +
   labs(
     x = "Government status",
     y = "Sentiment",
-    title = "Sentiment by government status (Germany)"
+    title = "Sentiment by government status (NZ)"
   )
 
 ggsave("./gender_EDA_nz/sentiment_gov_status.pdf", width = 9.5, height = 11)
@@ -472,7 +354,7 @@ ggplot(df_merged, aes(x = Status, y = sentiment, fill = Party)) +
   labs(
     x = "Government status",
     y = "Sentiment",
-    title = "Sentiment by government status for each party (Germany)"
+    title = "Sentiment by government status for each party (NZ)"
   )
 
 ggsave("./gender_EDA_nz/sentiment_party_gov_status.pdf", width = 9.5, height = 11)
@@ -488,7 +370,7 @@ ggplot(df_merged, aes(x = Party, y = sentiment, fill = Status)) +
   labs(
     x = "Party",
     y = "Sentiment",
-    title = "Sentiment by party colored by government status (Germany)"
+    title = "Sentiment by party colored by government status (NZ)"
   )
 
 ggsave("./gender_EDA_nz/sentiment_party_gov_status_alt.pdf", width = 9.5, height = 11)
@@ -502,7 +384,7 @@ ggplot(df_merged, aes(x = Party, y = sentiment, fill = gender)) +
   labs(
     x = "Party",
     y = "Sentiment",
-    title = "Sentiment by party, government status, and speaker sex (Germany)"
+    title = "Sentiment by party, government status, and speaker sex (NZ)"
   )
 
 ggsave("./gender_EDA_nz/sentiment_party_gov_status_sex.pdf", width = 9.5, height = 11)
