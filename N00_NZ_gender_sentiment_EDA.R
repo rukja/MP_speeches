@@ -130,7 +130,7 @@ df_merged.ye <- df_merged %>%
                      Year <= 2010 ~ 2008,
                      Year <= 2013 ~ 2011,
                      Year <= 2016 ~ 2014,
-                     Year <= 2019 ~ 2017
+                     Year <= 2019 ~ 2017,
                      TRUE ~ NA
            )) 
 
