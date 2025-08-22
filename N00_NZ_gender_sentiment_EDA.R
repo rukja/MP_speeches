@@ -104,39 +104,6 @@ df_merged <- cbind(df_sentiment, docvars(c.fbn)) %>%
 qsave(df_merged, "nz_files/nz_gender_sentiment_df.qs")
 df_merged <- qread("nz_files/nz_gender_sentiment_df.qs")
 
-# Load manifesto information
-mp_setapikey("manifesto_apikey.txt")
-mpds <- mp_maindataset() %>%
-  dplyr::filter(countryname == "New Zealand") %>%
-  dplyr::filter(date > 199510) %>% # Obtain data from 1995 onwards for merging
-  mutate(prop_seats = absseat/totseats) %>%
-  mutate(party_merge = 
-           case_when(partyabbrev == "NZF" ~ "NZ First",
-                     partyabbrev == "Greens" ~ "Green/LINKE",
-                     partyname == "Māori Party" ~ "Maori/LINKE",
-                     TRUE ~ partyabbrev)) %>%
-  dplyr::filter(party_merge != "") %>%
-  dplyr::filter(absseat > 0) %>%
-  mutate(year_election = as.numeric(substr(date, 1, 4))) %>%
-  dplyr::select(-c(date, party))
-
-# Merge with df merge
-
-df_merged.ye <- df_merged %>%
-  mutate(year_election =
-           case_when(Year <= 2001 ~ 1999,
-                     Year <= 2004 ~ 2002,
-                     Year <= 2007 ~ 2005,
-                     Year <= 2010 ~ 2008,
-                     Year <= 2013 ~ 2011,
-                     Year <= 2016 ~ 2014,
-                     Year <= 2019 ~ 2017,
-                     TRUE ~ NA
-           )) 
-## IN PROGRESS
-
-df.merged.mpds <- inner_join(df_merged.ye, mpds,
-                             by = c("party" = "party_merge", "year_election"))
 
 # Begin plotting (non mpds data)
 
