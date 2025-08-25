@@ -376,5 +376,5 @@ ggplot(df_merged, aes(x = Party, y = sentiment, fill = gender)) +
 ggsave("./gender_EDA_nz/sentiment_party_gov_status_sex.pdf", width = 9.5, height = 11)
 
 ## DONE
-q <- qread("./nz_files/nz_gender_sentiment_df.qs")
-write.csv(q, "./nz_files/nz_gender_sentiment_df.csv")
+q <- qread("./nz_files/filtered_nz.qs")
+write.csv(q, "./nz_files/nz_filtered.csv")
