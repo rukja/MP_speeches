@@ -34,12 +34,18 @@ big_data["clean_text"] = big_data["text"].apply(clean_text)
 
 # Vectorize data
 
-vectorizer = TfidfVectorizer(max_features=10000, stop_words="english", min_df = 0.1)
+vectorizer = TfidfVectorizer(max_features=10000, stop_words="english", min_df = 0.01)
 X = vectorizer.fit_transform(big_data["clean_text"])
 print("TF-IDF shape:", X.shape)
 
 matrix = X.toarray()
-vectorized_df = pd.DataFrame(matrix, index = big_data["party"], columns = vectorizer.get_feature_names())
+vectorized_df = pd.DataFrame(matrix, columns=vectorizer.get_feature_names_out())
+selected_sum = vectorized_df.sum().sort_values(ascending=False).head(20)
+vectorized_df["party"] = big_data["party"].values
+
+# EDA 
+eslected_vectorized = vectorized_df.loc[:, selected_sum.index.to_list() + ["party"]]
+
 
 
 # Cluster data
