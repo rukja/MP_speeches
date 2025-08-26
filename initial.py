@@ -17,8 +17,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 plt.style.use('ggplot')
 
+# Read in New Zealand Data
 
 big_data = pd.read_csv("./nz_files/nz_filtered.csv")
+
+# Clean New Zealand Data
 
 def clean_text(text):
     text = str(text).lower()
@@ -29,37 +32,23 @@ def clean_text(text):
 
 big_data["clean_text"] = big_data["text"].apply(clean_text)
 
-# Vectorize
+# Vectorize data
 
 vectorizer = TfidfVectorizer(max_features=5000, stop_words="english")
 X = vectorizer.fit_transform(big_data["clean_text"])
 print("TF-IDF shape:", X.shape)
 
-# Cluster
+# Cluster data
 
 from sklearn.cluster import KMeans
 
-k = 5  
+k = 5  # Fit to five clusters
 kmeans = KMeans(n_clusters=k, random_state=19, n_init='auto')
 big_data["cluster"] = kmeans.fit_predict(X)
 
 print(big_data["cluster"].value_counts())
 
-party_counts = big_data.groupby(["cluster", "party"]).size().reset_index(name="count")
-print(party_counts.head())
-
-plt.figure(figsize=(12,6))
-sns.barplot(data=party_counts, x="cluster", y="count", hue="party")
-
-plt.title("Distribution of Parties within Clusters")
-plt.xlabel("Cluster")
-plt.ylabel("Number of Speeches")
-plt.legend(title="Party", bbox_to_anchor=(1.05, 1), loc='upper left')
-plt.tight_layout()
-plt.show()
-
-
-# Create a cross-tab (clusters x parties)
+# Visualize cluster membership
 ct = pd.crosstab(big_data["cluster"], big_data["party"])
 
 # Plot stacked bar chart
@@ -72,9 +61,10 @@ plt.legend(title="Party", bbox_to_anchor=(1.05, 1), loc="upper left")
 plt.tight_layout()
 plt.show()
 
+# Perform PCA 
+
 from sklearn.decomposition import TruncatedSVD
 
-# Reduce to 2 components for plotting
 svd = TruncatedSVD(n_components=2, random_state=19)
 X_reduced = svd.fit_transform(X)
 
@@ -83,7 +73,7 @@ big_data["pc2"] = X_reduced[:,1]
 
 # Scatterplot of speeches in PCA space, colored by cluster
 plt.figure(figsize=(10,7))
-sns.scatterplot(data=big_data.sample(5000, random_state=42),  # sample for readability
+sns.scatterplot(data=big_data.sample(5000, random_state=42),  # sample randomly
                 x="pc1", y="pc2", hue="party", palette="tab10", alpha=0.6)
 
 plt.title("Clusters of MP Speeches (PCA projection)")
