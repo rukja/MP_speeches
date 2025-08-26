@@ -34,7 +34,7 @@ big_data["clean_text"] = big_data["text"].apply(clean_text)
 
 # Vectorize data
 
-vectorizer = TfidfVectorizer(max_features=10000, stop_words="english", min_df = 0.01)
+vectorizer = TfidfVectorizer(max_features=10000, stop_words="english", min_df = 0.01, max_df = 0.80, ngram_range=(1,3))
 X = vectorizer.fit_transform(big_data["clean_text"])
 print("TF-IDF shape:", X.shape)
 
@@ -44,9 +44,22 @@ selected_sum = vectorized_df.sum().sort_values(ascending=False).head(20)
 vectorized_df["party"] = big_data["party"].values
 
 # EDA 
-eslected_vectorized = vectorized_df.loc[:, selected_sum.index.to_list() + ["party"]]
+selected_vectorized = vectorized_df.loc[:, selected_sum.index.to_list() + ["party"]]
 
+long_df = vectorized_df.melt(
+    id_vars="party", 
+    value_vars=selected_sum.index.to_list(), 
+    var_name="word", 
+    value_name="tfidf"
+)
+flierprops = dict(markersize=0.1)
+plt.figure(figsize=(10, 6))
+sns.boxplot(data=long_df, x="word", y="tfidf", hue="party", flierprops=flierprops)
 
+plt.xticks(rotation=45, ha="right")
+plt.title("TF-IDF distributions of top words by party")
+plt.tight_layout()
+plt.show()
 
 # Cluster data
 
