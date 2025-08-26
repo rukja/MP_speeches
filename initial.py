@@ -34,9 +34,13 @@ big_data["clean_text"] = big_data["text"].apply(clean_text)
 
 # Vectorize data
 
-vectorizer = TfidfVectorizer(max_features=5000, stop_words="english")
+vectorizer = TfidfVectorizer(max_features=10000, stop_words="english", min_df = 0.1)
 X = vectorizer.fit_transform(big_data["clean_text"])
 print("TF-IDF shape:", X.shape)
+
+matrix = X.toarray()
+vectorized_df = pd.DataFrame(matrix, index = big_data["party"], columns = vectorizer.get_feature_names())
+
 
 # Cluster data
 
@@ -82,3 +86,4 @@ plt.ylabel("PC2")
 plt.legend(title="Cluster", bbox_to_anchor=(1.05, 1), loc="upper left")
 plt.tight_layout()
 plt.show()
+
