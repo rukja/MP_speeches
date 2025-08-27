@@ -34,7 +34,7 @@ big_data["clean_text"] = big_data["text"].apply(clean_text)
 
 # Vectorize data
 
-vectorizer = TfidfVectorizer(max_features=10000, stop_words="english", min_df = 0.01, max_df = 0.80, ngram_range=(1,3))
+vectorizer = TfidfVectorizer(max_features=5000, stop_words="english", min_df = 0.01, max_df = 0.80, ngram_range=(1,2))
 X = vectorizer.fit_transform(big_data["clean_text"])
 print("TF-IDF shape:", X.shape)
 
