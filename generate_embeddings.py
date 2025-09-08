@@ -20,7 +20,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sentence_transformers import SentenceTransformer
 from collections import defaultdict, Counter
-from spacy_cleaner import processing, Cleaner
+from spacy_cleaner import Cleaner, removers, replacers, mutators
 
 # seeds for reproducibility
 RANDOM_SEED = 19
@@ -46,12 +46,19 @@ df = pd.read_csv("./nz_files/nz_filtered.csv")
 ## using spacy and spacy_cleaner
 
 model_cleanse = spacy.load("en_core_web_sm")
-pipeline = spacy_cleaner.Pipeline(
-    model = model_cleanse,
-    removers.remove_stopward_token,
-    replacers.replace_punctuation_token,
-    mutators.mutate_lemma_token,
+
+pipeline = Cleaner(
+    model_cleanse,
+    [
+        removers.remove_stopword_token,
+        replacers.replace_punctuation_token,
+        mutators.mutate_lemma_token
+    ]
 )
-def sanitize_text(speech_column):
+
+nz_speeches = 
+
+def sanitize_text(speech_column, pipeline):
+    
 
 
