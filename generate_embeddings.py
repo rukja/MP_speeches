@@ -56,7 +56,7 @@ pipeline = Cleaner(
     ]
 )
 
-nz_speeches = 
+nz_speeches = df[""]
 
 def sanitize_text(speech_column, pipeline):
     
