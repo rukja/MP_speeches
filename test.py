@@ -548,6 +548,8 @@ class ContextAwareTextClustererWithOutputs:
             cluster_analysis['clusters'].append(cluster_info)
         
         # Save cluster analysis
+        with open(os.path.join(self.dirs['reports'], f'cluster_analysis_{embedding_type}.json'), 'w') as f:
+            json.dump(cluster_analysis, f, indent=2)
         
         # Save data with cluster labels
         output_data = self.data.copy()
@@ -719,17 +721,44 @@ class ContextAwareTextClustererWithOutputs:
             }
         
         # Load embeddings
-        embedding_files = [f for f in os.listdir(self.dirs['embeddings']) if f.endswith('.npy')]
-        for file in embedding_files:
-            emb_name = file.replace('.npy', '')
-            self.embeddings[emb_name] = np.load(os.path.join(self.dirs['embeddings'], file))
-            print(f"Loaded {emb_name}: {self.embeddings[emb_name].shape}")
+        if os.path.exists(self.dirs['embeddings']):
+            embedding_files = [f for f in os.listdir(self.dirs['embeddings']) if f.endswith('.npy')]
+            for file in embedding_files:
+                emb_name = file.replace('.npy', '')
+                self.embeddings[emb_name] = np.load(os.path.join(self.dirs['embeddings'], file))
+                print(f"Loaded {emb_name}: {self.embeddings[emb_name].shape}")
         
-        # Load clustering results
+        # Load clustering results (JSON-serializable version)
         results_file = os.path.join(self.dirs['reports'], 'clustering_results.json')
         if os.path.exists(results_file):
             with open(results_file, 'r') as f:
-                self.clustering_results = json.load(f)
+                clustering_summary = json.load(f)
+            
+            # Reconstruct full clustering results by loading individual components
+            self.clustering_results = {}
+            for emb_type in clustering_summary.keys():
+                # Load labels
+                labels_file = os.path.join(self.dirs['data'], f'cluster_labels_{emb_type}.npy')
+                if os.path.exists(labels_file):
+                    labels = np.load(labels_file)
+                    
+                    # Load model
+                    model_file = os.path.join(self.dirs['models'], f'kmeans_model_{emb_type}.pkl')
+                    model = None
+                    if os.path.exists(model_file):
+                        with open(model_file, 'rb') as f:
+                            model = pickle.load(f)
+                    
+                    # Reconstruct full results
+                    self.clustering_results[emb_type] = {
+                        'k': clustering_summary[emb_type]['k'],
+                        'labels': labels,
+                        'silhouette_score': clustering_summary[emb_type]['silhouette_score'],
+                        'silhouette_scores': clustering_summary[emb_type]['silhouette_scores'],
+                        'k_values': clustering_summary[emb_type]['k_values'],
+                        'model': model
+                    }
+                    
             print(f"Loaded clustering results for {len(self.clustering_results)} methods")
         
         # Load log
@@ -738,6 +767,23 @@ class ContextAwareTextClustererWithOutputs:
             with open(log_file, 'r') as f:
                 self.log = json.load(f)
             print(f"Loaded processing log: {len(self.log['steps_completed'])} steps completed")
+        
+        # Load saved models
+        model_files = {
+            'lda_model.pkl': 'lda',
+            'lda_vectorizer.pkl': 'lda_vectorizer', 
+            'tfidf_model.pkl': 'tfidf',
+            'pca_model.pkl': 'pca'
+        }
+        
+        for filename, model_name in model_files.items():
+            model_path = os.path.join(self.dirs['models'], filename)
+            if os.path.exists(model_path):
+                with open(model_path, 'rb') as f:
+                    self.models[model_name] = pickle.load(f)
+                print(f"Loaded {model_name} model")
+        
+        return len(self.embeddings), len(self.clustering_results)
 
 
 # Enhanced usage example with full pipeline and output saving
