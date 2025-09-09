@@ -144,3 +144,4 @@ embedding_outputs/embeddings/NZ_word2vec_sample.model
 embedding_outputs/embeddings/NZ_word2vec_sample.model
 embedding_outputs/embeddings/embeddings_dict.npy
 embedding_outputs/data/NZ_sample_silhouette_scores.csv
+embedding_outputs/plots/NZ_Silhouette.png

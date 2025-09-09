@@ -121,7 +121,7 @@ best_labels = pd.DataFrame(labels_df[best_clustering], columns = [best_clusterin
 
 df_sample = pd.concat([df_sample, best_labels], axis=1)
 
-df_sample.to_csv("embedding_outputs/clustering/NZ_sample_clustered_speeches.csv", index=False)
+df_sample.to_csv("embedding_outputs/data/NZ_sample_clustered_speeches.csv", index=False)
 
 ########################################
 # 2. Unsupervised Clustering Visualization
