@@ -20,6 +20,8 @@ from bokeh.models import ColumnDataSource, HoverTool, CategoricalColorMapper
 from bokeh.palettes import Category10
 from sklearn.decomposition import TruncatedSVD
 from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 from collections import defaultdict, Counter
@@ -88,7 +90,7 @@ for emb_type, emb in embeddings_dict.items():
 labels_df = pd.DataFrame(cluster_labels, index=df_sample.index)
 results_df = pd.DataFrame(results, columns=["embedding", "method", "k", "silhouette"])
 # save clustering results
-results_df.to_csv("embedding_outputs/clustering/NZ_sample_silhouette_scores.csv", index=False)
+results_df.to_csv("embedding_outputs/data/NZ_sample_silhouette_scores.csv", index=False)
 
 # Visualize
 
@@ -208,3 +210,53 @@ plt.tight_layout()
 plt.show()
 plt.savefig("embedding_outputs/plots/NZ_umap_topic_party.png")
 
+
+########################################
+# 3. SUPERVISED CLASSIFICATION
+########################################
+# Logistic reg
+
+# Features & target
+y = df_sample["party"]
+
+results_clf = {}
+
+for emb_name, X in embeddings_dict.items():
+    print(f"\nEvaluating embedding: {emb_name}")
+    
+    # Train/test split (stratify by party)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=RANDOM_SEED, stratify=y
+    )
+    
+    # Scale features
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    
+    # Train multinomial logistic regression
+    clf = LogisticRegression(
+        max_iter=2000,
+        multi_class="multinomial",
+        solver="saga",
+        C=1.0,
+        random_state=RANDOM_SEED
+    )
+    clf.fit(X_train_scaled, y_train)
+    
+    # Evaluate
+    train_acc = clf.score(X_train_scaled, y_train)
+    test_acc = clf.score(X_test_scaled, y_test)
+    
+    print(f"Train accuracy: {train_acc:.3f}")
+    print(f"Test accuracy: {test_acc:.3f}")
+    
+    results_clf[emb_name] = {
+        "train_acc": train_acc,
+        "test_acc": test_acc
+    }
+results_df = pd.DataFrame(results_clf).T
+results_df = results_df.sort_values("test_acc", ascending=False)
+print("\nSummary of classifier performance:")
+print(results_df)
+results_df.to_csv("embedding_outputs/data/NZ_sample_supervised_results.csv")
