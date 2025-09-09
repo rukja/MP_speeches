@@ -129,3 +129,15 @@ nz_clustering_analysis/reports/topics_analysis.json
 zsh/etc/profile.d/mamba.sh
 embedding_outputs/data/NZ_cleaned_sample.csv
 .gitignore
+embedding_outputs/embeddings/hybrid_embeddings.npy
+embedding_outputs/embeddings/NZ_word2vec_sample.model
+.gitignore
+embedding_outputs/embeddings/topic_embeddings.npy
+.gitignore
+embedding_outputs/embeddings/NZ_word2vec_sample.model
+.gitignore
+embedding_outputs/embeddings/NZ_word2vec_sample.model
+embedding_outputs/embeddings/sentence_embeddings.npy
+embedding_outputs/embeddings/NZ_word2vec_sample.model
+embedding_outputs/embeddings/word_embeddings.npy
+embedding_outputs/embeddings/NZ_word2vec_sample.model
