@@ -50,9 +50,7 @@ np.save(f"embedding_outputs/embeddings/embeddings_dict.npy", embeddings_dict)
 # Read in sampled df
 df_sample = pd.read_csv("embedding_outputs/data/NZ_cleaned_sample.csv")
 
-# Create clustering folder
-clustering_output = "embeddings_outputs/clustering"
-os.makedirs(clustering_output, exist_ok=True)
+
 
 ########################################
 # 1. Unsupervised Clustering
