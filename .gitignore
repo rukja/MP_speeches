@@ -149,3 +149,4 @@ embedding_outputs/data/NZ_sample_clustered_speeches.csv
 embedding_outputs/plots/NZ_umap_topic.png
 embeddings_clustering.html
 embedding_outputs/plots/NZ_interactive_party_UMAP_topic.html
+embedding_outputs/plots/NZ_umap_topic_party.png

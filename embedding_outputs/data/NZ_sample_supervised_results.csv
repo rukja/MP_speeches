@@ -1,0 +1,5 @@
+,train_acc,test_acc
+word,0.48475,0.432
+hybrid,0.50375,0.428
+sentence,0.633,0.425
+topic,0.4185,0.392
