@@ -239,7 +239,6 @@ for emb_name, X in embeddings_dict.items():
         max_iter=2000,
         multi_class="multinomial",
         solver="saga",
-        C=1.0,
         random_state=RANDOM_SEED
     )
     clf.fit(X_train_scaled, y_train)
