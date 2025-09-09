@@ -127,3 +127,5 @@ nz_clustering_analysis/reports/similar_pairs_sentence_all_MiniLM_L6_v2.json
 nz_clustering_analysis/reports/similar_pairs_topic_lda.json
 nz_clustering_analysis/reports/topics_analysis.json
 zsh/etc/profile.d/mamba.sh
+embedding_outputs/data/NZ_cleaned_sample.csv
+.gitignore
