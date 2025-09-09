@@ -15,7 +15,7 @@ import pandas as pd
 import gensim
 import gensim.downloader as api
 from sklearn.model_selection import train_test_split
-from sklearn.decomposition import PCA, TruncatedSVD
+from sklearn.decomposition import PCA, TruncatedSVD, LatentDirichletAllocation
 from sklearn.cluster import KMeans, AgglomerativeClustering, SpectralClustering
 from sklearn.metrics import silhouette_score
 from sklearn.linear_model import LogisticRegression
@@ -63,7 +63,6 @@ model_cleanse = spacy.load("en_core_web_sm")
 pipeline = Cleaner(
     model_cleanse,
     removers.remove_stopword_token,
-    removers.remove_punctuation_token,
     mutators.mutate_lemma_token
 )
 
@@ -122,22 +121,65 @@ print(word_embeddings)
 embeddings_dict["word"] = word_embeddings
 
 ## B) Sentence-level embeddings
-# use sentence-transformers model (MiniLM, all-MiniLM-L6-v2 etc.)
+sentence_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+batch_size = 32 if len(texts) > 1000 else 64
+sentence_embeddings = sentence_model.encode(
+        texts.tolist(), 
+        batch_size=batch_size,
+        show_progress_bar=True,
+        convert_to_numpy=True,
+        normalize_embeddings=True
+)
+
 # batch encode speeches
 embeddings_dict["sentence"] = sentence_embeddings
 
 ## C) Topic-level embeddings
 # vectorize text with TF-IDF → run LDA
-# represent each speech by topic distribution vector
-embeddings_dict["topic"] = lda_embeddings
+tfidf_vectorizer = TfidfVectorizer(
+    max_df=0.9,
+    min_df=20,
+    stop_words="english"
+)
 
-## D) Context-aware embeddings
-# smaller transformer model (distilbert-base-uncased, etc.)
-embeddings_dict["context"] = context_embeddings
+tfidf_matrix = tfidf_vectorizer.fit_transform(texts.tolist())
+# represent each speech by topic distribution vector
+n_topics = 15
+lda_model = LatentDirichletAllocation(
+    n_components=n_topics,
+    random_state=RANDOM_SEED, # set earlier
+    learning_method="batch"
+)
+lda_topics = lda_model.fit_transform(tfidf_matrix)
+
+
+# exploration of topics 
+def print_top_words(model, feature_names, n_top_words=10):
+    for topic_idx, topic in enumerate(model.components_):
+        top_words = [feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]]
+        print(f"Topic {topic_idx}: {' '.join(top_words)}")
+
+print_top_words(lda_model, tfidf_vectorizer.get_feature_names_out())
+
+embeddings_dict["topic"] = lda_topics
+
+## D) Hybrid embeddings
+
+normalized_embeddings = {}
+for name, embeddings in embeddings_dict.items():
+    scaler = StandardScaler()
+    normalized_embeddings[name] = scaler.fit_transform(embeddings)
+
+hybrid = np.hstack([normalized_embeddings[name] for name in embeddings_dict]) # Works because we have the same number of speeches
+
+n_components = min(100, hybrid.shape[1] // 2)
+pca = PCA(n_components=n_components, random_state=RANDOM_SEED)
+hybrid_reduced = pca.fit_transform(hybrid)
+embeddings_dict['hybrid'] = hybrid_reduced
 
 # save embeddings
 for emb_type, emb in embeddings_dict.items():
-    np.save(f"outputs/embeddings/{emb_type}_embeddings.npy", emb)
+    np.save(f"embedding_outputs/embeddings/{emb_type}_embeddings.npy", emb)
 
 
 
