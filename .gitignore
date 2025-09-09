@@ -141,3 +141,5 @@ embedding_outputs/embeddings/sentence_embeddings.npy
 embedding_outputs/embeddings/NZ_word2vec_sample.model
 embedding_outputs/embeddings/word_embeddings.npy
 embedding_outputs/embeddings/NZ_word2vec_sample.model
+embedding_outputs/embeddings/NZ_word2vec_sample.model
+embedding_outputs/embeddings/embeddings_dict.npy
